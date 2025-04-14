@@ -37,10 +37,10 @@ services:
   redis:
     image: docker.io/redis:6
     container_name: warehouse_local_redis
-    
+
     volumes:
       - warehouse_local_redis_data:/data
-    
+
 
   celeryworker:
     <<: *django
@@ -52,20 +52,20 @@ services:
     ports: []
     command: /start-celeryworker
 
-  celerybeat:
-    <<: *django
-    image: warehouse_local_celerybeat
-    container_name: warehouse_local_celerybeat
-    depends_on:
-      - redis
-      - postgres
-    ports: []
-    command: /start-celerybeat
-
-  flower:
-    <<: *django
-    image: warehouse_local_flower
-    container_name: warehouse_local_flower
-    ports:
-      - '5555:5555'
-    command: /start-flower
+#  celerybeat:
+#    <<: *django
+#    image: warehouse_local_celerybeat
+#    container_name: warehouse_local_celerybeat
+#    depends_on:
+#      - redis
+#      - postgres
+#    ports: []
+#    command: /start-celerybeat
+#
+#  flower:
+#    <<: *django
+#    image: warehouse_local_flower
+#    container_name: warehouse_local_flower
+#    ports:
+#      - '5555:5555'
+#    command: /start-flower
