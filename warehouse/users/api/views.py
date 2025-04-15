@@ -45,4 +45,3 @@ class UserCreateAPIView(CreateAPIView):
         user = serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED, headers=headers)
-
