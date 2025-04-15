@@ -150,16 +150,35 @@
   {% endblock inline_javascript %}
 </body>
 <script>
-    const socket = new WebSocket('ws://localhost:8000/ws/notifications/');
+  const socket = new WebSocket("ws://" + window.location.host + "/ws/notifications/");
 
-    socket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        alert(data.message);  // Отображаем уведомление
-    };
+  socket.onopen = function(e) {
+    console.log("WebSocket connected");
+    socket.send("ping");
+  };
 
-    socket.onclose = function(e) {
-        console.error('WebSocket closed unexpectedly');
-    };
+  socket.onmessage = function(e) {
+  if (e.data === "pong!") {
+    console.log("PONG received");
+    return;
+  }
 
+  try {
+    const data = JSON.parse(e.data);
+    console.log("WebSocket message received:", data);
+    alert("Новое сообщение: " + data.messages);
+  } catch (err) {
+    console.error("Ошибка при парсинге:", err);
+  }
+};
+
+  socket.onclose = function(e) {
+    console.log("WebSocket closed");
+  };
+
+  socket.onerror = function(error) {
+    console.error("WebSocket error:", error);
+  };
 </script>
+
 </html>
