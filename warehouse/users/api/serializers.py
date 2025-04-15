@@ -11,6 +11,42 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username", "last_name", "first_name", "fullname", "email"]
 
 
+class UserCreateSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(style={"input_type": "password"}, write_only=True)
+    class Meta:
+        model = User
+        fields = ["username", "last_name", "first_name", "patronymic", "email", "password", "password2"]
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data["username"],
+            last_name=validated_data["last_name"],
+            first_name=validated_data["first_name"],
+            fullname=validated_data["patronymic"],
+            email=validated_data["email"],
+        )
+        user.set_password(validated_data["password"])
+        user.save()
+
+    def validate(self, data):
+        if data.get("password") != data.get("password2"):
+            raise ValidationError({"password": "Passwords do not match"})
+        return data
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data["username"],
+            last_name=validated_data["last_name"],
+            first_name=validated_data["first_name"],
+            patronymic=validated_data["patronymic"],
+            email=validated_data["email"],
+        )
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
+
+
 class SupplierCreateSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(required=True, label=_("User id for supplier"))
     class Meta:

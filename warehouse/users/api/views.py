@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.generics import CreateAPIView
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
@@ -8,7 +9,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from warehouse.users.models import User, Supplier
 
-from .serializers import UserSerializer, SupplierCreateSerializer, SupplierListSerializer
+from .serializers import UserSerializer, SupplierCreateSerializer, SupplierListSerializer, UserCreateSerializer
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
@@ -33,4 +34,15 @@ class SupplierViewSet(ModelViewSet):
         if self.action == "create":
             return SupplierCreateSerializer
         return SupplierListSerializer
+
+
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED, headers=headers)
 

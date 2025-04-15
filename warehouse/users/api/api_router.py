@@ -3,7 +3,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import SimpleRouter
 
-from warehouse.users.api.views import UserViewSet, SupplierViewSet
+from warehouse.users.api.views import UserViewSet, SupplierViewSet, UserCreateAPIView
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
@@ -14,5 +14,5 @@ router.register("supplier", SupplierViewSet)
 app_name = "users"
 urlpatterns = [
     path("", include(router.urls)),
-
+    path("create/", UserCreateAPIView.as_view(), name="create"),
 ]
